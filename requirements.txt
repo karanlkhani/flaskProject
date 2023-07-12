@@ -1,0 +1,6 @@
+Python libraries
+1. flask
+2. json
+2. pymongo
+
+Mongodb Framework
