@@ -11,8 +11,8 @@ studentsDetails = []
 client = MongoClient("mongodb://localhost:27017")
 db = client["newdoc"]
 collection = db["students"]
- 
-     
+
+
 @app.route("/",methods=['GET'])
 def defaultFunction():
         return "invalid route"
@@ -24,6 +24,24 @@ def addUser():
         rollnumber = req["rollnumber"]
         if collection.find_one({"rollnumber":rollnumber}):
                return json.dumps({"status":400,"message":"Rollnumber already exists"})
+        
+        rollnumber = int(float(rollnumber))
+        number = int(float(collection.find_one({"rollnumber":rollnumber})))
+        if rollnumber == number:
+             return json.dumps({"status":400,"message":"rollnumber already exists"})
+        rollnumber = str(rollnumber)
+        
+        for i in req.values():
+             if isinstance(i,str) and i.strip() == "":
+                  return json.dumps({"status":400,"message":"elements cannot be empty"})
+
+        try:
+             rollnumber = int(float(rollnumber))
+             age = int(float(req["age"]))
+             grade = int(float(req["grade"]))
+
+        except ValueError:
+             return json.dumps({"status":400,"message":"rollnumber, age and grade should be integer"})
         else:
             collection.insert_one(req)
             return json.dumps({"status":200,"message":"Added Sucessfull","data":req}, default=str)
@@ -72,3 +90,5 @@ def SearchUser():
 
 if __name__ == "__main__":
 	 app.run(host="127.0.0.9", port=8080,debug=True)
+    
+
